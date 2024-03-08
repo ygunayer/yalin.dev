@@ -44,8 +44,8 @@ jobs:
           docker build -t $IMAGE_TAG .
           docker push $IMAGE_TAG
 
-          if [[ "$ADDITIONAL_TAG" != "" ]]; then
-            LABELED_TAG="ygunayer/yalin.dev:$ADDITIONAL_TAG"
+          if [[ "$IMAGE_LABEL" != "" ]]; then
+            LABELED_TAG="ygunayer/yalin.dev:$IMAGE_LABEL"
             docker tag $IMAGE_TAG $LABELED_TAG
             docker push $LABELED_TAG
           fi
