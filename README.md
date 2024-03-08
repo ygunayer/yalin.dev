@@ -1,6 +1,8 @@
 # yalin.dev
 The source code for my personal website, [yalin.dev](https://yalin.dev).
 
+![Screenshot](./screenshot.png)
+
 ## Development
 The website is built using [Hugo](https://gohugo.io/) and it uses a modified version of the [Blowfish](https://blowfish.page) theme: [ygunayer/blowfish](https://github.com/blowfish/ygunayer)
 
