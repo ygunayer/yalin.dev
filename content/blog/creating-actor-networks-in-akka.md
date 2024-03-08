@@ -12,7 +12,7 @@ Thankfully, Akka does this abstraction so well that the whole process is almost 
 <!--more-->
 
 ## Basic Example
-If we look at the [*Actor Path* section in the first article](http://yalingunayer.com/blog/introduction-to-the-actor-model-with-akka/#Actor_Path) we'll see that the actor path notation allows for references to remote actor systems through the use of `akka.tcp` as the protocol prefix. For instance, a path such as `akka.tcp://Foo@192.168.1.14:9000` refers to an actor system called `Foo` that is running on host `192.168.1.14` through the port `9000`.
+If we look at the [*Actor Path* section in the first article](/blog/introduction-to-the-actor-model-with-akka/#Actor_Path) we'll see that the actor path notation allows for references to remote actor systems through the use of `akka.tcp` as the protocol prefix. For instance, a path such as `akka.tcp://Foo@192.168.1.14:9000` refers to an actor system called `Foo` that is running on host `192.168.1.14` through the port `9000`.
 
 Building up on this, let's create we have two actor systems called `Foo` and `Bar`, have them contain aptly-named singular actors, namely `FooActor` and `BarActor`, and let them communicate with each other.
 

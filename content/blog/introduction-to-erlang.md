@@ -300,7 +300,7 @@ $ erl -noshell -s fizzbuzz -s init stop
 ```
 
 ### guess: Guessing Game
-Having implemented the previous examples, we now know enough to rewrite our number guessing game from our previous article, [Actor-based Number Guessing Game in Akka](https://yalingunayer.com/blog/actor-based-number-guessing-game-in-akka/).
+Having implemented the previous examples, we now know enough to rewrite our number guessing game from our previous article, [Actor-based Number Guessing Game in Akka](/blog/actor-based-number-guessing-game-in-akka/).
 
 We'll keep the feature set and gameplay the same (adding a few cheats), so all we'll have to do is to implement an actor pick a random number between 1 and 100, and have it communicate with the user until they find the correct number.
 
