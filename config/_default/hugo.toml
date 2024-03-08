@@ -1,0 +1,14 @@
+baseURL = 'https://yalin.dev/'
+languageCode = 'en-US'
+title = 'yalin.dev'
+
+theme = "blowfish"
+
+[taxonomies]
+  tag = "tags"
+  #category = "categories"
+  #author = "authors"
+  series = "series"
+
+[params]
+  copyright = "© { year } - Yalin Gunayer"
