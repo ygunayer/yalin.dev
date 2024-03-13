@@ -140,7 +140,7 @@ It's worth noting that the `ActorRef` is a direct reference to an actor, and the
 ### Actor Hierarchy and Guardian Actors
 When an actor system is created, it instantiates 3 top-level actors (also called the "guardians"): `root`, `system` and `user`. Being at the top-most level, the `root` guardian acts both as the entry point of the actor system, and also as the final stop in the case of a fatal all-systems failure (i.e. it's the last actor that shuts down when a fatal error occurs, see the "shutdown order" on the image below). Not to be confused with the actor system itself, right below the root guardian, the `system` guardian acts both as the grand-parent of all system-related actors (i.e. loggers), and as the last stop before the root guardian in case of failure. At the same level of the system guardian is the `user` which serves both as the grand-parent of all user-created actors, and also as the last stop before the system guardian in case of failure.
 
-{% asset_img guardians.png Guardian Actors %}
+![Guardian Actors](./guardians.png)
 
 With the exception of the `root` guardian, every Akka actor has a parent that's determined at the time of the actor's creation. For the top-most level actors this is the `user` guardian, and for others it's the actor that requested its creation.
 
@@ -213,7 +213,7 @@ bar ! "begin" // an actor of type Foo will be created as the child of the actor 
 ### Actor Path
 Each actor has a name, and it can either be specified at the time of the actor's creation, or be left to the actor system to auto-generate. Considering that each actor also has a parent, there occurs a naturally-formed sequence of names that start from the actor system, and goes up to the actor itself as we follow the parent-child relationships of an actor. If we combine this we get a (hopefully) unique path which we can call the actor path and use to locate a certain actor.
 
-{% asset_img local-actor-path.png Actor Path Format (Local) %}
+![Actor Path Format (Local)](./local-actor-path.png)
 
 Typically, an actor path consists of a protocol prefix, followed by the name of the actor system, and then the name of the actor system. Therefore, a `SomeActor` that operates under an actor system named `SomeActorSystem` would have the following path:
 
@@ -229,7 +229,7 @@ akka://SomeActorSystem/user/SomeActor/SomeOtherActor
 
 As I've already stated before, actor systems can be configured to run as a server, and handle remote actor lookup requests. In such cases, actor paths naturally contain information about the remote aspects of the actor system, such as the transport mechanism, which is added to the protocol prefix, and the hostname and the port number which are added to the name of the actor system.
 
-{% asset_img remote-actor-path.png Actor Path Format (Remote) %}
+![Actor Path Format (Remote)](./remote-actor-path.png)
 
 For instance, if our actor system was configured to work remotely through the `TCP` port `9001` on a machine with the IP address `123.45.67.89`, we could access the actors I've previously mentioned through the following addresses:
 
@@ -380,7 +380,7 @@ These are done through the `preStart()`, `postStop()`, `preRestart(reason: Throw
 
 Here's a snapshot from the [Principles of Reactive Programming course](https://www.coursera.org/course/reactive):
 
-{% asset_img actor-lifecycle.png Actor Lifecycle %}
+![Actor Lifecycle](./actor-lifecycle.png)
 
 ### Supervisor Strategies and Fault Tolerance
 What determines whether to restart the failing actor in case of a failure, or to bring down the entire system, is the fault tolerance levels of individual actors. Errors that are thrown from inside an actor's `receive` loop is captured by its parent, and it's that parent actor's responsibility to decide what to do (in other words, the level of tolerance to apply). This is called supervisor strategy.

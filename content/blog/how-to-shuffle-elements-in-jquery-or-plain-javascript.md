@@ -12,11 +12,11 @@ Given an array of integers such as `[ 3, 2, 8, 1, 5, 1 ]`, and given that we mea
 
 <!--more-->
 
-{% jsfiddle 9kzSM js,html,result light 100% 200 %}
+{{< jsfiddle id="9kzSM" >}}
 
 While this is a really simple predicate, it makes two comparisons and takes up a space of 3 lines, decreasing performance and readability of the code. By subtracting b from a, however, we can drop this down to a single operation, meaning much better performance and readability. The logic behind is that the subtraction `(a – b)` would produce a negative value when a is less than b, 0 when `a` equals `b` and a positive value when `a` is greater than `b`. For example, when `a` is `5` and `b` is `2`, `(a – b)` would equal `3`, a positive value, which means a is greater than 2; or when `a` is `1` and `b` is `8`, `(a – b)` would equal `-7`, a negative value, which means a is less than b.
 
-{% jsfiddle L64HE js,html,result light 100% 200 %}
+{{< jsfiddle id="L64HE" >}}
 
 Now that we know how the `sort()` method works, let’s go with randomizing it. To do that, we’re going to use the standard Math.random() function which produces a decimal value between 0.0 and 1.0.
 
@@ -26,32 +26,32 @@ According to this rule, we can go ahead and gamble that even when we’re genera
 
 What if we create a predicate that does just that and put it in a sort function? Let’s find out!
 
-{% jsfiddle zVwqt js,html,result light 100% 200 %}
+{{< jsfiddle id="zVwqt" >}}
 
 Of course it’s not perfect (see the previous explanations regarding RNGs), but it really does look like a pretty good shuffling function to me! It doesn’t care about the value types either, so you can use it to sort any type of data! (I used `JSON.stringify` in this example, which basically does what its name suggests, converting Javascript objects to strings)
 
-{% jsfiddle nMDvR js,html,result light 100% 200 %}
+{{< jsfiddle id="nMDvR" >}}
 
 If we can shuffle an array with any type of value, who’s to say that we can’t shuffle an array of DOM elements, or an array of jQuery objects that wrap those elements?
 
 Fortunately for us, our friends working on jQuery had the insight of mirroring the `sort()` method onto jQuery objects, without changing any of its aspects. So, given a jQuery object which contains multiple elements, such as `$(“#sort-menu > li”)`, we can use the `sort()` method to return a sorted version of those elements.
 
-{% jsfiddle PcWyp js,html,result light 100% 200 %}
+{{< jsfiddle id="PcWyp" >}}
 
 As you can see in the example, I’ve outputted the text of the list items after I’ve sorted them, only to show that the sorting operation worked. In order to actually change the order those elements, however, we will need to re-attach them to their parents, because, if you remember, sort() doesn’t modify the array itself, or in this case, the jQuery object, rather, it returns a sorted version of the array or jQuery elements. Methods like append, appendTo, prepend and prependTo do not clone or detach/reattach elements as long as their target is the same as their calling elements’ actual parents, so that’s a really big plus on the performance side as well.
 
-{% jsfiddle GasWW js,html,result light 100% 200 %}
+{{< jsfiddle id="GasWW" >}}
 
 Now you can see that the list items are now in order, even thought they were unsorted in the original HTML code. This means that we can now use the same random predicate as we did before to shuffle our elements.
 
-{% jsfiddle drCqG js,html,result light 100% 200 %}
+{{< jsfiddle id="drCqG" >}}
 
 That’s it! Every time you run the script (try clicking on the *Result* button at the top), the elements will be ordered differently.
 
 Now, let’s create a virtual numeric keypad to show off our newly-found skills!
 
-{% jsfiddle VS9kV js,html,result light 100% 250 %}
+{{< jsfiddle id="VS9kV" height="300" >}}
 
 And finally, as promised, here’s the plain Javascript version of our shuffler. It’s `~80%` faster than the jQuery version (see [http://jsperf.com/plain-js-shuffle-vs-jquery-shuffle](http://jsperf.com/plain-js-shuffle-vs-jquery-shuffle)), however, it doesn’t work on IE<9 (but then again, jsFiddle itself doesn’t work either) because it uses `getElementsByClassName`, which is not supported by those browsers. You can use polyfills for them, though, but keep in mind that a very important part of jQuery’s low performance is related to these IE<9 polyfills.
 
-{% jsfiddle MUMga js,html,result light 100% 250 %}
+{{< jsfiddle id="MUMga" height="300" >}}

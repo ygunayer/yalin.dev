@@ -40,7 +40,7 @@ Once a client connects, the server put them in a matchmaking queue, and if there
 
 To summarize, here's an overview of the client flow:
 
-{% asset_img client-flow-overview.png Overview of the client flow %}
+![Overview of the client flow](./client-flow-overview.png)
 
 ### Scores and Matchmaking
 This post is more about the client-server communication in a multiplayer game than other aspects of multiplayer gaming such as scoring and matchmaking, so we won't cover these here. They are, however, among the main topic of future posts, so please stay tuned. Until then, we won't score players and the matchmaking will simply take the first two player in the queue and put them in a game.
@@ -87,7 +87,7 @@ The codebase for this project is considerably larger than previous examples, so 
 
 P.S. Since we have multiple actors running different state machines, I've colored their diagrams differently. Use the following legend if needed.
 
-{% asset_img 00-legend.png Legend for the state diagrams %}
+![Legend for the state diagrams](./00-legend.png)
 
 ### Domain Objects
 Since we're making a card game our domain objects are cards, decks, ranks and suits, and we can implement a few case classes and companion objects to represent them with convenience.
@@ -245,7 +245,7 @@ Also, we need a name for each player since we want to introduce them to their op
 
 Here's the client's state diagram for the connection phase:
 
-{% asset_img 01-client-connecting.png Connection phase state diagram for the client %}
+![Connection phase state diagram for the client](./01-client-connecting.png)
 
 And here's an excerpt from the client code that implements this flow.
 
@@ -294,18 +294,18 @@ class PlayerActor extends Actor {
 ### Matchmaking
 The matchmaking is performed on the server's end, and as stated in the previous section it's really nothing special. For the sake of completeness, I've also included the initialization phase.
 
-{% asset_img 02-server-matchmaking.png Matchmaking phase state diagram for the server %}
+![Matchmaking phase state diagram for the server](./02-server-matchmaking.png)
 
 ### Game Logic
 We've finally found a match, so it's time to run the game logic now!
 
 As always, our game room actor will be responsible for not only running the game logic, but also watching the players' connections and terminating if one of them disconnects. Upon termination, it should also return whoever's left in the room to the lobby so they can play another game.
 
-{% asset_img 03-server-playing.png Server's flow diagram for handling the game logic %}
+![Server's flow diagram for handling the game logic](./03-server-playing.png)
 
 As for the client, remember that in previous sections we left them in the lobby, and now it's time to let them into a game. They'll start out from the matchmaking phase and will then begin waiting for the game to start. As seen on the server's flow, it'll first prepare the deck and decide on who's going first, announce these details and then give the turn to a random player. We'll have anticipate each step on our client.
 
-{% asset_img 03-client-playing.png Client's flow diagram for handling the game logic %}
+![Client's flow diagram for handling the game logic](./03-client-playing.png)
 
 With the flows in place, let's implement the actual game logic. We'll do this by keeping the game's current state and updating it based on the cards played by the players, assuming that a valid card was played, and we'll also keep the game score so we can determine the winner in the end. Looking at the game rules in the first section, here's our ruleset:
 
@@ -535,8 +535,8 @@ Welcome to Bastra! Please enter your name.
 Here's what the gameplay looks like:
 
 <video controls>
-    <source src="{% asset_path gameplay.webm %}" type="video/webm" />
-    <source src="{% asset_path gameplay.mp4 %}" type="video/mp4" />
+    <source src="./gameplay.webm" type="video/webm" />
+    <source src="./gameplay.mp4" type="video/mp4" />
     Your browser does not support the video tag.
 </video>
 

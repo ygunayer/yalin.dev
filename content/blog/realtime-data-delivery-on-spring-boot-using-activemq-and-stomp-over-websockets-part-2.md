@@ -374,8 +374,8 @@ And finally, the client code. This time it's a little bit more complicated, but 
 And here's a demonstration:
 
 <video controls>
-    <source src="{% asset_path realtime-messaging.webm %}" type="video/webm" />
-    <source src="{% asset_path realtime-messaging.mp4 %}" type="video/mp4" />
+    <source src="realtime-messaging.webm" type="video/webm" />
+    <source src="realtime-messaging.mp4" type="video/mp4" />
     Your browser does not support the video tag.
 </video>
 

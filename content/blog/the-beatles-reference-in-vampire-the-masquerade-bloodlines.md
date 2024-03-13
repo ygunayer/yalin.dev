@@ -14,7 +14,7 @@ The reference can be found pretty early in the game, in the hospital in Santa Mo
 
 Here's a screenshot:
 
-{% asset_img 2013-08-11_00004.jpg Screenshot of the reference %}
+![Screenshot of the reference](./2013-08-11_00004.jpg)
 
 This references The Beatles song Doctor Robert, which has following lines:
 

@@ -308,7 +308,7 @@ Based on a given transformation function, returns a new stream (not necessarily 
 |  C#  | IEnumerable&lt;R&gt; Select(Func&lt;T, R&gt; mapper) |
 *T: input, R: output*
 
-{% asset_img map.png map function %}
+![map function](./map.png)
 
 **Java**
 ```java
@@ -343,7 +343,7 @@ Applies `map` to a stream and unfolds the returning stream. This is helpful in c
 |  C#  | IEnumerable&lt;R&gt; SelectMany(Func&lt;T, IEnumerable&lt;R&gt;&gt; mapper) |
 *T: input, R: output*
 
-{% asset_img flatmap.png flatMap function %}
+![flatMap function](./flatmap.png)
 
 **Java**
 ```java
@@ -407,7 +407,7 @@ Returns a new stream containing only the elements on a stream that passes the gi
 | Java | Stream&lt;T&gt; filter(Function&lt;T, Boolean&gt; predicate) |
 |  C#  | IEnumerable&lt;T&gt; Where(Func&lt;T, bool&gt; predicate) |
 
-{% asset_img filter.png filter function %}
+![filter function](./filter.png)
 
 **Java**
 ```java
@@ -441,7 +441,7 @@ Offsets a stream, returning a new stream containing the remainder of a stream af
 | Java | Stream&lt;T&gt; skip(long count) |
 |  C#  | IEnumerable&lt;T&gt; Skip(int count) |
 
-{% asset_img skip.png skip function %}
+![skip function](./skip.png)
 
 **Java**
 ```java
@@ -507,7 +507,7 @@ Returns a new stream containing only the unique elements in a stream. Used the t
 | Java | Stream&lt;T&gt; distinct() |
 |  C#  | IEnumerable&lt;T&gt; Distinct() |
 
-{% asset_img distinct.png distinct function %}
+![distinct function](./distinct.png)
 
 **Java**
 ```java

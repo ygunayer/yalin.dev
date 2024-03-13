@@ -29,31 +29,31 @@ This is how Excel 2010 ribbon looks like when the developer tab is hidden:
 
 To show the developer tab, click the "File" button and select "Options".
 
-{% asset_img file_options.jpg File Options Menu %}
+![File Options Menu](./file_options.jpg)
 
 The "Excel Options" window should be open now. Switch to "Customize Ribbon" tab on the left menu.
 
-{% asset_img excel_options.jpg Enable Developer Tab %}
+![Enable Developer Tab](./excel_options.jpg)
 
 The list on the right is where you select which tabs you want to hide or show in the main window. As you can see, the "Developer" checkbox is unchecked. Click on that checkbox to check it.
 
-{% asset_img developer_checked.jpg Enable Developer Tab %}
+![Enable Developer Tab](./developer_checked.jpg)
 
 Click on the "OK" button at the bottom, and the developer tab should be visible.
 
-{% asset_img ribbon_devtab.jpg Enable Developer Tab %}
+![Enable Developer Tab](./ribbon_devtab.jpg)
 
 Now, to actually write the macro we want. Switch to developer tab and hit the "Visual Basic" button. You can also use the `Alt+F11` hotkey.
 
-{% asset_img vba.jpg Visual Basic Editor Button %}
+![Visual Basic Editor Button](./vba.jpg)
 
 A window titled "Microsoft Visual Basic for Application" will open up. There, click on the "Insert" button on the top and select "Module".
 
-{% asset_img vba_insmod.jpg Insert Module Menu %}
+![Insert Module Menu](./vba_insmod.jpg)
 
 A new module will be created and opened for editing. This is where we’ll be coding our subroutine (macro). When we use the `Ctrl+S` hotkey, the subroutine will be saved and we’ll be able to use that subroutine as a macro back in Excel.
 
-{% asset_img vba_newmod.jpg Empty Workbook %}
+![Empty Workbook](./vba_newmod.jpg)
 
 As the window title suggests, Excel macros are actually Visual Basic scripts. The syntax and keywords of VB are as simple as they get. "Sub" means "define subroutine", "Dim" means "define variable or reference", "Set" means "set the reference to", "MsgBox" means "create a message box" and so on.
 
@@ -87,13 +87,13 @@ After writing this code, save the current VBA module by pressing `Ctrl+S`, and s
 
 When back at Excel again, select a single cell (`A1` for example), switch over to developer tab and hit the macro button, or simply press `Alt+F8`. A window with a list of all available macros should appear:
 
-{% asset_img macrolist.jpg Macro List %}
+![Macro List](./macrolist.jpg)
 
 Here on this window, you can either assign a hotkey (using the "Options" button on the rigth) for your macros or run them directly. Excel closes the window automatically when you click on the "Run" button, so there’s no point in adding a hotkey right now.
 
 When you run the macro, a message box containing the value of the selected cell will pop up:
 
-{% asset_img msgbox.jpg Message Box Sample %}
+![Message Box Sample](./msgbox.jpg)
 
 "Range" and "Selection" actually return a set or an array of objects. For example, calling `Range("A1:C3")` would return all cells between A1 and C3, and Selection would return all selected cells. Knowing this, we can now write a macro that loops through our selection and tries and converts link texts into hyperlinks.
 
@@ -101,15 +101,15 @@ But here’s a catch. In order Excel to add a hyperlink to a text, the specified
 
 Now, verifying a URL or a file name by traditional string operations is a very, VERY hard work. So instead, we’ll be using regular expressions. Microsoft also added built-in regular expression classes in their libraries, but they aren’t referenced in new modules by default. We’ll have to manually reference them in our module. To do that, switch back to VBA window, clean your subroutine code, click on "Tools" at the top menu and select "References".
 
-{% asset_img refs.jpg References Window %}
+![References Window](./refs.jpg)
 
 The References window might take a while to load at first launch, so be patient. Once it loads, find `Microsoft VBScript Regular Expressions 5.5` on the list.
 
-{% asset_img refregex.jpg RegEx Dependency %}
+![RegEx Dependency](./refregex.jpg)
 
 Check the check box next to it, press the OK button and you can now use regular expression classes or methods in your code.
 
-{% asset_img refregex2.jpg RegEx Dependency %}
+![RegEx Dependency](./refregex2.jpg)
 
 Let’s go back to our code. I’ll explain everything step-by-step.
 
@@ -176,26 +176,26 @@ End Sub
 
 Now, about that Yes/No/Cancel dialog box I told you about. I’m not exactly sure about Excel 2007, but in Excel 2010, macros are disabled by default on a workbook (file) basis (*.xlsx files). You can either enable macros on a non-macro file for a session, or save the file as a macro-enabled workbook file (*.xlsm files). That dialog box asks you if you’d like to enable macros for that session ("Yes" option) or if you’d like to save the file as a new XLSM file ("No" option). Either way is fine, but the macro we wrote might be handy in other situations too, so I’ll save a new XLSM file (you’ll end up losing the macro when you close the file if you chose "Yes").
 
-{% asset_img yesnodialog.jpg Macro-Enabled File Save Dialog %}
+![Macro-Enabled File Save Dialog](./yesnodialog.jpg)
 
 When you click on "No", a file save dialog will pop up. There, choose "Excel Macro-Enabled Workbook (*.xlsm)" in the "Save as Type:" box and type in a file name to your liking. I’ll keep the same name as my macro-free workbook file.
 
-{% asset_img savedialog.jpg Macro-Enabled File Save Dialog %}
+![Macro-Enabled File Save Dialog](./savedialog.jpg)
 
 We can now close the VBA window (titled "Microsoft Visual Basic for Applications") and switch back to Excel (note the changed filename). There, select the link texts you want to add hyperlinks to (don’t be afraid to make mistakes, we’ve already taken precautions, see "regex")...
 
-{% asset_img selection.jpg Rows are Selected %}
+![Rows are Selected](./selection.jpg)
 
 Open up the "Macros" window (Alt+F8), select "MySubroutine" (or whatever you named your macro) and click on the "Run" button.
 
-{% asset_img runmacro.jpg Macros Window %}
+![Macros Window](./runmacro.jpg)
 
 And, voila! All well-formatted URLs in our selection are converted into hyperlinks! Even if we had well formed file addresses (with "file://" in the beginning) in our selection, they would be converted to hyperlinks.
 
-{% asset_img fileconvert.jpg Voila! %}
+![Voila!](./fileconvert.jpg)
 
 URLs or file names outside of our selection won’t be converted.
 
-{% asset_img selection2.jpg Non-URL Text are Ignored %}
+![Non-URL Text are Ignored](./selection2.jpg)
 
 That’s all for now. Before I finish, however, I want to add that I’d like to see that as a built-in function on a newer Excel version. As this article suggests, it’s not a very hard thing to do anyway.

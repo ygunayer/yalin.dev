@@ -165,8 +165,8 @@ Finally, we'll create a very simple page to serve as the UI. Notice how the mess
 And, that's it! Here's a simple demonstration using two different browser windows:
 
 <video controls>
-    <source src="{% asset_path guestbook.webm %}" type="video/webm" />
-    <source src="{% asset_path guestbook.mp4 %}" type="video/mp4" />
+    <source src="guestbook.webm" type="video/webm" />
+    <source src="guestbook.mp4" type="video/mp4" />
     Your browser does not support the video tag.
 </video>
 

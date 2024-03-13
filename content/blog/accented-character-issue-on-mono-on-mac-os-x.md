@@ -10,7 +10,7 @@ I’ve recently encountered a similar problem in one of my projects, namely, a d
 
 <!--more-->
 
-{% asset_img uninorm-example.jpg Unicode Strings in Composed and Decomposed Forms %}
+![Unicode Strings in Composed and Decomposed Forms](./uninorm-example.jpg)
 
 After some research I found that this was caused by the fact that Windows and OS X handle unicode strings differently. OS X uses a unicode normalization form called NFD which decomposes Unicode characters into its components and arrange them in a specific order, whereas Windows uses NFC which does it in reverse, i.e. it combines the components of an accented character into a single character. When two strings with different normalization forms are compared they don’t match.
 
@@ -20,8 +20,10 @@ Since OSes apply these normalization steps on all strings that are passed to the
 
 I’ve created the following gist to demonstrate the issue. It first creates a folder, then fetches a list of folders, and To run on OS X (assuming you have Mono Runtime installed), simply type ```mcs UnicodeTest.cs && mono UnicodeTest.exe```.
 
-{% gist ygunayer/935a1f871cba3c213138 %}
+<div class="not-prose">
+{{< gist "ygunayer" "935a1f871cba3c213138" >}}
+</div>
 
 And here’s a sample output:
 
-{% asset_img uninorm-output.jpg Output of the Demo %}
+![Output of the Demo](./uninorm-output.jpg)

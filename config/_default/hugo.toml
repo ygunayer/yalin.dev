@@ -12,3 +12,6 @@ theme = "blowfish"
 
 [params]
   copyright = "© { year } - Yalin Gunayer"
+
+[markup.goldmark.renderer]
+  unsafe = true
