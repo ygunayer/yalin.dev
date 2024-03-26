@@ -150,6 +150,6 @@ disableTextInHeader = false
   # yandex = ""
 
 [umami]
-  enable = true
-  website_id = "94ab2f1d-97de-462e-a613-2ee64f3bc2d1"
-  url = "https://umami.yalin.dev/umami.js"
+  # enable = true
+  # website_id = "94ab2f1d-97de-462e-a613-2ee64f3bc2d1"
+  # url = "https://umami.yalin.dev/umami.js"

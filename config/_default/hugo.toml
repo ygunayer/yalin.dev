@@ -1,4 +1,4 @@
-baseURL = 'https://yalin.dev/'
+baseURL = 'http://localhost:1313/'
 languageCode = 'en-US'
 title = 'yalin.dev'
 
@@ -15,3 +15,6 @@ theme = "blowfish"
 
 [markup.goldmark.renderer]
   unsafe = true
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
