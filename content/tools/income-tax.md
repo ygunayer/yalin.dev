@@ -20,7 +20,11 @@ You can use this tool to calculate the income tax for any given amount.
         <th>Tax Year</th>
         <td class="radio-group">
           <label>
-            <input type="radio" name="taxYear" value="2024" checked />
+            <input type="radio" name="taxYear" value="2025" checked />
+            <strong>2025</strong>
+          </label>
+          <label>
+            <input type="radio" name="taxYear" value="2024" />
             <strong>2024</strong>
           </label>
           <label>
