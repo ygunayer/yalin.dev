@@ -69,10 +69,21 @@ document.addEventListener('alpine:init', () => {
     rawAmount: '',
     expenses: '0',
     exemptExportSoftware: true,
+    customSoftwarePct: '',
     exemptUnder29: false,
+
+    init() {
+      this.$watch('taxYear', () => { this.customSoftwarePct = ''; });
+    },
 
     get taxData() {
       return TAX_DATA[this.taxYear];
+    },
+
+    get effectiveSoftwarePct() {
+      if (!this.exemptExportSoftware) return 0;
+      const custom = parseFloat(this.customSoftwarePct);
+      return isFinite(custom) ? custom : this.taxData.softwareExemptPct;
     },
 
     get income() {
@@ -83,7 +94,7 @@ document.addEventListener('alpine:init', () => {
     get calc() {
       const { income, exemptUnder29, taxData } = this;
       const expenses = parseFloat(this.expenses) || 0;
-      const softwarePct = this.exemptExportSoftware ? taxData.softwareExemptPct : 0;
+      const softwarePct = this.effectiveSoftwarePct;
 
       let taxable = income - expenses;
       if (softwarePct > 0) taxable *= 1 - softwarePct / 100;
@@ -104,8 +115,10 @@ document.addEventListener('alpine:init', () => {
           min: fmt(min),
           max: fmt(b.max),
           rate: fmtPct(b.rate),
+          rateNum: Math.round(b.rate * 100),
           applicable: applicable > 0 ? fmt(applicable) : '-',
           tax: tax > 0 ? fmt(tax) : '-',
+          hasIncome: applicable > 0,
         };
       });
 
