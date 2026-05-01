@@ -12,96 +12,66 @@ You can use this tool to calculate the income tax for any given amount.
 ---
 {{< rawhtml >}}
 
-<form action="/" id="calculator">
+<script src="./main.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+
+<div x-data="taxCalculator">
   <h4>Input</h4>
-  <table data-table="input" class="table-auto">
+  <table class="table-auto">
     <tbody>
       <tr>
         <th>Tax Year</th>
         <td class="radio-group">
-          <label>
-            <input type="radio" name="taxYear" value="2025" checked />
-            <strong>2025</strong>
-          </label>
-          <label>
-            <input type="radio" name="taxYear" value="2024" />
-            <strong>2024</strong>
-          </label>
-          <label>
-            <input type="radio" name="taxYear" value="2023" />
-            <strong>2023</strong>
-          </label>
-          <label>
-            <input type="radio" name="taxYear" value="2022" />
-            <strong>2022</strong>
-          </label>
+          <template x-for="year in ['2026', '2025', '2024', '2023', '2022']" :key="year">
+            <label>
+              <input type="radio" name="taxYear" :value="year" x-model="taxYear" />
+              <strong x-text="year"></strong>
+            </label>
+          </template>
         </td>
       </tr>
       <tr>
-        <th>
-          <label for="in-amount">
-            Total Income
-          </label>
-        </th>
+        <th><label for="in-amount">Total Income</label></th>
         <td>
-          <input class="bordered rounded-md text-neutral-700" id="in-amount" type="text" name="amount" /> <strong style="margin-left: .5em">TRY</strong>
+          <input class="bordered rounded-md text-neutral-700" id="in-amount" type="text" x-model="rawAmount" />
+          <strong style="margin-left:.5em">TRY</strong>
         </td>
       </tr>
       <tr>
-        <th>
-          <label for="in-expenses">
-            Tax-Deductible Expenses
-          </label>
-        </th>
+        <th><label for="in-expenses">Tax-Deductible Expenses</label></th>
         <td>
-          <input class="bordered rounded-md text-neutral-700" id="in-expenses" type="text" name="expenses" value="0" /> <strong style="margin-left: .5em">TRY</strong>
+          <input class="bordered rounded-md text-neutral-700" id="in-expenses" type="text" x-model="expenses" />
+          <strong style="margin-left:.5em">TRY</strong>
         </td>
       </tr>
       <tr>
         <th>Tax Exemptions</th>
         <td>
-          <div>
+          <div style="margin-bottom:1em">
             <label>
+              <input type="checkbox" x-model="exemptExportSoftware" />
               <strong>Eligible as a Software Exporter</strong>
-              <div class="radio-group" style="padding-left: 20px; margin-bottom: 1em">
-                <label>
-                  <input type="radio" name="exemptExportSoftware" value="0" />
-                  <strong>None</strong>
-                </label>
-                <label>
-                  <input type="radio" name="exemptExportSoftware" value="50" />
-                  <strong>50% (Before 2023)</strong>
-                </label>
-                <label>
-                  <input type="radio" name="exemptExportSoftware" value="80" checked />
-                  <strong>80% (2023 and onwards)</strong>
-                </label>
-              </div>
             </label>
+            <div style="padding-left:24px" x-text="fmtPct(taxData.softwareExemptPct / 100) + ' exemption for ' + taxYear"></div>
           </div>
-          <div>
+          <div x-show="taxData.under29Amount > 0">
             <label>
-              <input type="checkbox" name="exemptUnder29" value="1" />
-              <strong>Under 29 years of age - 75.000 TRY</strong>
+              <input type="checkbox" x-model="exemptUnder29" />
+              <strong>Under 29 years of age</strong>
             </label>
+            <div style="padding-left:24px" x-text="fmt(taxData.under29Amount) + ' exemption for ' + taxYear"></div>
           </div>
         </td>
       </tr>
     </tbody>
-    <tfoot style="border-top: 1px solid #ccc">
-    </tfoot>
   </table>
 
   <h4>Calculation Results</h4>
-  <table class="table-fixed" data-table="results">
+  <table class="table-fixed">
     <thead>
-      <tr style="text-align: center">
-        <th colspan="3">
-          Tax Rate Breakpoints
-        </th>
-        <th colspan="2">
-          Amounts Subject to this Breakpoint
-        </th>
+      <tr style="text-align:center">
+        <th colspan="3">Tax Rate Breakpoints</th>
+        <th colspan="2">Amounts Subject to this Breakpoint</th>
       </tr>
       <tr>
         <th>Min. Amount</th>
@@ -112,41 +82,39 @@ You can use this tool to calculate the income tax for any given amount.
       </tr>
     </thead>
     <tbody>
+      <template x-for="b in calc.breakdown" :key="b.min">
+        <tr>
+          <td x-text="b.min"></td>
+          <td x-text="b.max"></td>
+          <td x-text="b.rate"></td>
+          <td x-text="b.applicable"></td>
+          <td x-text="b.tax"></td>
+        </tr>
+      </template>
     </tbody>
     <tfoot>
-      <tr style="border-top: 1px solid #ccc">
+      <tr style="border-top:1px solid #ccc">
         <th colspan="3">Total Income:</th>
-        <th>
-          <strong data-result="total-income"></strong>
-        </th>
+        <th><strong x-text="fmt(income)"></strong></th>
         <th></th>
       </tr>
-      <tr style="border-top: 1px solid #ccc">
+      <tr>
         <th colspan="3">Total Tax:</th>
-        <th>
-          <strong data-result="total-tax"></strong>
-        </th>
-        <th style="text-align: left; padding-left: .5em">
-          <span data-result="effective-tax-rate"></span>
-        </th>
+        <th><strong x-text="fmt(-calc.totalTax)"></strong></th>
+        <th><span x-text="income > 0 ? '(~' + fmtPct(calc.effectiveTaxRate) + ' effective)' : ''"></span></th>
       </tr>
-      <tr style="border-top: 1px solid #ccc">
+      <tr style="border-top:1px solid #ccc">
         <th colspan="3">Net Income:</th>
-        <th>
-          <span data-result="net-income"></span>
-        </th>
+        <th><span x-text="fmt(calc.netIncome)"></span></th>
         <th></th>
       </tr>
       <tr>
         <th colspan="3">Net Income (Monthly):</th>
-        <th>
-          <span data-result="net-income-monthly"></span>
-        </th>
+        <th><span x-text="fmt(calc.netIncome / 12)"></span></th>
         <th></th>
       </tr>
     </tfoot>
   </table>
-</form>
+</div>
 
-<script type="text/javascript" src="./main.js" />
 {{< /rawhtml >}}

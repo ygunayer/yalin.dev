@@ -1,223 +1,123 @@
-var TaxRateBreakpointsByYear = {
-  2022: [
-    {min: 0, max: 32000, rate: .15},
-    {min: 32000, max: 70000, rate: .20},
-    {min: 70000, max: 170000, rate: .27},
-    {min: 170000, max: 880000, rate: .35},
-    {min: 880000, max: Infinity, rate: .4}
-  ],
-  2023: [
-    {min: 0, max: 70000, rate: .15},
-    {min: 70000, max: 150000, rate: .20},
-    {min: 150000, max: 370000, rate: .27},
-    {min: 370000, max: 1900000, rate: .35},
-    {min: 1900000, max: Infinity, rate: .4}
-  ],
-  2024: [
-    {min: 0, max: 110000, rate: .15},
-    {min: 110000, max: 230000, rate: .20},
-    {min: 230000, max: 580000, rate: .27},
-    {min: 580000, max: 3000000, rate: .35},
-    {min: 3000000, max: Infinity, rate: .4}
-  ],
-  2025: [
-    {min: 0, max: 158000, rate: .15},
-    {min: 158000, max: 330000, rate: .20},
-    {min: 330000, max: 800000, rate: .27},
-    {min: 800000, max: 4300000, rate: .35},
-    {min: 4300000, max: Infinity, rate: .4}
-  ]
+const TAX_DATA = {
+  2026: {
+    brackets: [
+      { max: 190000,   rate: 0.15 },
+      { max: 400000,   rate: 0.20 },
+      { max: 1500000,  rate: 0.27 },
+      { max: 5300000,  rate: 0.35 },
+      { max: Infinity, rate: 0.40 },
+    ],
+    softwareExemptPct: 100,
+    under29Amount: 0,
+  },
+  2025: {
+    brackets: [
+      { max: 158000,   rate: 0.15 },
+      { max: 330000,   rate: 0.20 },
+      { max: 800000,   rate: 0.27 },
+      { max: 4300000,  rate: 0.35 },
+      { max: Infinity, rate: 0.40 },
+    ],
+    softwareExemptPct: 80,
+    under29Amount: 330000,
+  },
+  2024: {
+    brackets: [
+      { max: 110000,   rate: 0.15 },
+      { max: 230000,   rate: 0.20 },
+      { max: 580000,   rate: 0.27 },
+      { max: 3000000,  rate: 0.35 },
+      { max: Infinity, rate: 0.40 },
+    ],
+    softwareExemptPct: 80,
+    under29Amount: 230000,
+  },
+  2023: {
+    brackets: [
+      { max: 70000,    rate: 0.15 },
+      { max: 150000,   rate: 0.20 },
+      { max: 370000,   rate: 0.27 },
+      { max: 1900000,  rate: 0.35 },
+      { max: Infinity, rate: 0.40 },
+    ],
+    softwareExemptPct: 80,
+    under29Amount: 150000,
+  },
+  2022: {
+    brackets: [
+      { max: 32000,    rate: 0.15 },
+      { max: 70000,    rate: 0.20 },
+      { max: 170000,   rate: 0.27 },
+      { max: 880000,   rate: 0.35 },
+      { max: Infinity, rate: 0.40 },
+    ],
+    softwareExemptPct: 50,
+    under29Amount: 75000,
+  },
 };
 
-function formatAmount(amount, currency) {
-  if (amount >= Infinity || amount <= -Infinity) {
-    return '-';
-  }
+const fmt = n =>
+  isFinite(n)
+    ? Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(n) + ' TRY'
+    : '-';
 
-  currency = currency || 'TRY';
-  return Intl.NumberFormat('tr-TR', {style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0}).format(amount) + ' ' + currency;
-}
+const fmtPct = r => '%' + Math.round(r * 100);
 
-function generateAllBreakpointLabels() {
-  Object.keys(TaxRateBreakpointsByYear).forEach(function(year) {
-    var breakpoints = TaxRateBreakpointsByYear[year];
-    breakpoints.forEach(function(breakpoint) {
-      breakpoint.labels = [
-        formatAmount(breakpoint.min),
-        formatAmount(breakpoint.max),
-        formatPercentage(breakpoint.rate)
-      ];
-    });
-  });
-}
+document.addEventListener('alpine:init', () => {
+  Alpine.data('taxCalculator', () => ({
+    taxYear: '2026',
+    rawAmount: '',
+    expenses: '0',
+    exemptExportSoftware: true,
+    exemptUnder29: false,
 
-function formatPercentage(rate) {
-  return '%' + parseInt(100 * rate);
-}
+    get taxData() {
+      return TAX_DATA[this.taxYear];
+    },
 
-function runCalculationModel(input) {
-  var taxYear = input.taxYear;
-  var taxBreakpoints = TaxRateBreakpointsByYear[taxYear];
-  var income = input.income;
-  var expenses = isNaN(input.expenses) ? 0 : Number(input.expenses);
-  var exemptExportSoftware = isNaN(input.exemptExportSoftware) ? 0 : Number(input.exemptExportSoftware);
-  var exemptUnder29 = !!input.exemptUnder29;
+    get income() {
+      const n = parseFloat(String(this.rawAmount).replace(/[^\d.]/g, ''));
+      return isFinite(n) ? n : 0;
+    },
 
-  var inputBreakdown = [
-    {label: 'Base Taxables (Income)', value: income}
-  ];
+    get calc() {
+      const { income, exemptUnder29, taxData } = this;
+      const expenses = parseFloat(this.expenses) || 0;
+      const softwarePct = this.exemptExportSoftware ? taxData.softwareExemptPct : 0;
 
-  var taxableAmount = income;
+      let taxable = income - expenses;
+      if (softwarePct > 0) taxable *= 1 - softwarePct / 100;
+      if (exemptUnder29 && taxData.under29Amount > 0) {
+        taxable = Math.max(0, taxable - taxData.under29Amount);
+      }
 
-  if (expenses > 0) {
-    taxableAmount -= expenses;
-    inputBreakdown.push({
-      label: 'Deduction (Expenses)',
-      value: -expenses
-    });
-  }
+      let remaining = taxable;
+      let totalTax = 0;
 
-  if (exemptExportSoftware > 0) {
-    var deduction = taxableAmount * exemptExportSoftware / 100.0;
-    taxableAmount -= deduction;
-    inputBreakdown.push({
-      label: 'Deduction (Software Exporter - ' + formatPercentage(exemptExportSoftware / 100.0) + ')',
-      value: -deduction
-    });
-  }
-
-  if (exemptUnder29) {
-    var deduction = Math.min(taxableAmount, 75000);
-    taxableAmount = Math.max(0, taxableAmount - 75000);
-    inputBreakdown.push({
-      label: 'Deduction (Aged Under 29)',
-      value: -deduction
-    });
-  }
-
-  inputBreakdown.push({label: 'Total Deduction', value: income - taxableAmount});
-  inputBreakdown.push({label: 'Total Taxables', value: taxableAmount});
-
-  var remaining = taxableAmount;
-  var totalTax = 0;
-
-  var outputBreakdown = taxBreakpoints.map(function(breakpoint) {
-    var breakpointTaxLimit = breakpoint.max - breakpoint.min;
-    var applicableAmount = Math.min(remaining, breakpointTaxLimit);
-    var taxAmount = applicableAmount * breakpoint.rate;
-
-    remaining = Math.max(remaining - applicableAmount);
-    totalTax += taxAmount;
-
-    return {
-      applicableAmount: applicableAmount,
-      taxAmount: taxAmount
-    }
-  });
-
-  var netIncome = income - totalTax;
-  var effectiveTaxRate = totalTax / income;
-
-  return {
-    taxYear: taxYear,
-    taxBreakpoints: taxBreakpoints,
-    income: income,
-    inputBreakdown: inputBreakdown,
-    totalTax: totalTax,
-    expenses: expenses,
-    netIncome: netIncome,
-    effectiveTaxRate: effectiveTaxRate,
-    outputBreakdown: outputBreakdown
-  };
-}
-
-function init(form) {
-  var inputTable = form.querySelector('[data-table="input"]')
-  var inputFooter = inputTable.querySelector('tfoot');
-
-  var resultsTable = form.querySelector('[data-table="results"]');
-  var resultsBody = resultsTable.querySelector('tbody');
-  var resultsFooter = resultsTable.querySelector('tfoot');
-
-  function rerender() {
-    var input = {
-      taxYear: form.elements.taxYear.value,
-      income: form.elements.amount.value,
-      expenses: form.elements.expenses.value,
-      exemptExportSoftware: form.elements.exemptExportSoftware.value,
-      exemptUnder29: form.elements.exemptUnder29.checked,
-    };
-
-    if (isNaN(input.income)) {
-      return;
-    }
-
-    var result = runCalculationModel(input);
-
-    // INPUT BREAKDOWN
-    inputFooter.innerHTML = '';
-    result.inputBreakdown
-      .forEach(function(breakdown) {
-        var row = document.createElement('tr');
-        row.innerHTML = '<th>' + breakdown.label + '</th><td>' + formatAmount(breakdown.value) + '</td>';
-        inputFooter.appendChild(row);
+      const breakdown = taxData.brackets.map((b, i) => {
+        const min = i === 0 ? 0 : taxData.brackets[i - 1].max;
+        const applicable = Math.min(remaining, b.max - min);
+        const tax = applicable * b.rate;
+        remaining = Math.max(0, remaining - applicable);
+        totalTax += tax;
+        return {
+          min: fmt(min),
+          max: fmt(b.max),
+          rate: fmtPct(b.rate),
+          applicable: applicable > 0 ? fmt(applicable) : '-',
+          tax: tax > 0 ? fmt(tax) : '-',
+        };
       });
 
-    // BREAKPOINTS
-    resultsBody.innerHTML = '';
-    result.taxBreakpoints
-      .forEach(function(breakpoint) {
-        var row = document.createElement('tr');
+      return {
+        breakdown,
+        totalTax,
+        netIncome: income - totalTax,
+        effectiveTaxRate: income > 0 ? totalTax / income : 0,
+      };
+    },
 
-        breakpoint.labels.concat().forEach(function(label) {
-          var cell = document.createElement('td');
-          cell.innerText = label;
-          row.appendChild(cell);
-        });
-
-        ['applicable-amount', 'tax-amount'].forEach(function(key) {
-          var cell = document.createElement('td');
-          cell.setAttribute('data-result', key);
-          row.appendChild(cell);
-        });
-
-        resultsBody.appendChild(row);
-      });
-
-    // OUTPUT BREAKDOWN
-    result.outputBreakdown
-      .forEach(function(entry, idx) {
-        var row = resultsBody.children[idx];
-
-        var applicableAmount = entry.applicableAmount <= 0 ? '-' : formatAmount(entry.applicableAmount);
-        row.querySelector('[data-result="applicable-amount"]').innerText = applicableAmount;
-
-        var taxAmount = entry.taxAmount <= 0 ? '-' : formatAmount(entry.taxAmount);
-        row.querySelector('[data-result="tax-amount"]').innerText = taxAmount;
-      });
-
-    resultsFooter.querySelector('[data-result="total-income"]').innerText = formatAmount(result.income);
-
-    resultsFooter.querySelector('[data-result="total-tax"]').innerText = formatAmount(-result.totalTax);
-    resultsFooter.querySelector('[data-result="effective-tax-rate"]').innerText = '(~' + formatPercentage(result.effectiveTaxRate) + ' effective)';
-
-    resultsFooter.querySelector('[data-result="net-income"]').innerText = formatAmount(result.netIncome);
-    resultsFooter.querySelector('[data-result="net-income-monthly"]').innerText = formatAmount(result.netIncome / 12);
-  }
-
-  ['amount', 'expenses'].forEach(function(key) {
-    form.elements[key].addEventListener('keyup', rerender);
-    form.elements[key].addEventListener('blur', rerender);
-  });
-
-  form.addEventListener('change', rerender);
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-  });
-
-  rerender();
-}
-
-generateAllBreakpointLabels();
-init(document.getElementById('calculator'));
+    fmt,
+    fmtPct,
+  }));
+});
